@@ -12,38 +12,10 @@
         }
         
         body {
-            font-family: Arial, Helvetica, sans-serif;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             min-height: 100vh;
             padding: 20px;
-        }
-        
-        .header {
-            background: linear-gradient(135deg, #4682B4 0%, #1E3A5F 100%);
-            color: white;
-            padding: 30px 20px;
-            text-align: center;
-            border-radius: 15px;
-            margin-bottom: 30px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
-        }
-        
-        .header h1 {
-            font-size: 32px;
-            margin-bottom: 10px;
-            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
-        }
-        
-        .header p {
-            font-size: 14px;
-            opacity: 0.9;
-            margin: 5px 0;
-        }
-        
-        .affiliation {
-            color: #FFD700;
-            font-weight: bold;
-            font-size: 16px;
         }
         
         .container {
@@ -51,99 +23,148 @@
             margin: 0 auto;
         }
         
-        .welcome {
-            background: white;
-            padding: 40px;
-            border-radius: 15px;
+        .header {
+            background: linear-gradient(135deg, #4682B4 0%, #1E3A5F 100%);
+            color: white;
+            padding: 40px 30px;
             text-align: center;
+            border-radius: 20px;
             margin-bottom: 40px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            box-shadow: 0 15px 40px rgba(0,0,0,0.3);
         }
         
-        .welcome h2 {
-            color: #1E3A5F;
-            font-size: 28px;
+        .header h1 {
+            font-size: 36px;
             margin-bottom: 15px;
+            font-weight: 700;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
         }
         
-        .welcome p {
-            color: #666;
+        .header .affiliation {
             font-size: 16px;
-            line-height: 1.6;
+            color: #FFD700;
+            font-weight: 600;
+            margin: 10px 0;
         }
         
-        .cards {
+        .header p {
+            font-size: 14px;
+            margin: 8px 0;
+            opacity: 0.95;
+        }
+        
+        .welcome-section {
+            background: white;
+            padding: 50px 40px;
+            border-radius: 20px;
+            text-align: center;
+            margin-bottom: 50px;
+            box-shadow: 0 15px 40px rgba(0,0,0,0.2);
+        }
+        
+        .welcome-section h2 {
+            font-size: 32px;
+            color: #1E3A5F;
+            margin-bottom: 20px;
+            font-weight: 700;
+        }
+        
+        .welcome-section p {
+            font-size: 18px;
+            color: #666;
+            line-height: 1.8;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        
+        .cards-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
             gap: 30px;
-            margin-top: 30px;
+            margin-top: 40px;
         }
         
         .card {
             background: white;
-            border-radius: 15px;
-            padding: 30px;
+            border-radius: 20px;
+            padding: 40px 30px;
             text-align: center;
             box-shadow: 0 10px 30px rgba(0,0,0,0.2);
-            transition: transform 0.3s, box-shadow 0.3s;
-            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 5px;
+            background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
         }
         
         .card:hover {
-            transform: translateY(-10px);
-            box-shadow: 0 15px 40px rgba(0,0,0,0.3);
+            transform: translateY(-15px);
+            box-shadow: 0 20px 50px rgba(0,0,0,0.3);
         }
         
         .card-icon {
-            font-size: 48px;
-            margin-bottom: 20px;
+            font-size: 64px;
+            margin-bottom: 25px;
+            display: block;
         }
         
         .card h3 {
+            font-size: 24px;
             color: #1E3A5F;
-            font-size: 22px;
-            margin-bottom: 15px;
+            margin-bottom: 20px;
+            font-weight: 700;
         }
         
         .card p {
+            font-size: 15px;
             color: #666;
-            font-size: 14px;
-            margin-bottom: 20px;
-            line-height: 1.5;
+            line-height: 1.7;
+            margin-bottom: 30px;
+            min-height: 80px;
         }
         
         .card a {
             display: inline-block;
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             color: white;
-            padding: 12px 30px;
-            border-radius: 25px;
+            padding: 14px 35px;
+            border-radius: 30px;
             text-decoration: none;
-            font-weight: bold;
-            transition: all 0.3s;
+            font-weight: 600;
+            font-size: 16px;
+            transition: all 0.3s ease;
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.3);
         }
         
         .card a:hover {
             transform: scale(1.05);
-            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+            box-shadow: 0 8px 20px rgba(102, 126, 234, 0.5);
         }
         
-        .card-enquiry { border-top: 5px solid #2196F3; }
-        .card-registration { border-top: 5px solid #4CAF50; }
-        .card-admission { border-top: 5px solid #FF9800; }
-        .card-records { border-top: 5px solid #9C27B0; }
+        .card-enquiry::before { background: linear-gradient(90deg, #2196F3, #1976D2); }
+        .card-registration::before { background: linear-gradient(90deg, #4CAF50, #388E3C); }
+        .card-admission::before { background: linear-gradient(90deg, #FF9800, #F57C00); }
+        .card-records::before { background: linear-gradient(90deg, #9C27B0, #7B1FA2); }
         
         @media (max-width: 768px) {
-            .cards {
-                grid-template-columns: 1fr;
+            .header h1 {
+                font-size: 28px;
             }
             
-            .header h1 {
+            .welcome-section h2 {
                 font-size: 24px;
             }
             
-            .welcome h2 {
-                font-size: 22px;
+            .cards-grid {
+                grid-template-columns: 1fr;
             }
         }
     </style>
@@ -152,41 +173,41 @@
     <div class="container">
         <div class="header">
             <h1>🏫 HEMA HIGHER SECONDARY SCHOOL</h1>
-            <p class="affiliation">Affiliated to CENTRAL BOARD OF SECONDARY EDUCATION</p>
+            <p class="affiliation">**Affiliated to CENTRAL BOARD OF SECONDARY EDUCATION**</p>
             <p>School Code: 50383 | Affiliation No.: 1030417</p>
             <p>Govindpura, Bhopal, Madhya Pradesh, India - 462023</p>
             <p>📧 support@hemaschool.education | 📞 0755-2457270</p>
         </div>
         
-        <div class="welcome">
+        <div class="welcome-section">
             <h2>Welcome to Admission Portal 2026-2027</h2>
             <p>A comprehensive platform to manage student enquiries, registrations, and admissions efficiently.</p>
         </div>
         
-        <div class="cards">
+        <div class="cards-grid">
             <div class="card card-enquiry">
-                <div class="card-icon">📋</div>
+                <span class="card-icon">📋</span>
                 <h3>Enquiry Form</h3>
                 <p>Submit initial enquiry for admission. Start your journey with us by filling basic student information.</p>
                 <a href="enquiry-page1-CONNECTED.html">Start Enquiry →</a>
             </div>
             
             <div class="card card-registration">
-                <div class="card-icon">📝</div>
+                <span class="card-icon">📝</span>
                 <h3>Registration Form</h3>
                 <p>Complete the registration form with detailed information for prospective students.</p>
                 <a href="registration-CONNECTED.html">Register Now →</a>
             </div>
             
             <div class="card card-admission">
-                <div class="card-icon">✅</div>
+                <span class="card-icon">✅</span>
                 <h3>Admission Form</h3>
                 <p>Finalize admission with fee payment and document submission. Complete the enrollment process.</p>
                 <a href="admission-CONNECTED.html">Admit Student →</a>
             </div>
             
             <div class="card card-records">
-                <div class="card-icon">📊</div>
+                <span class="card-icon">📊</span>
                 <h3>Records Dashboard</h3>
                 <p>Access and manage all enquiry, registration, and admission records in one place.</p>
                 <a href="data-CONNECTED.html">View Data →</a>
