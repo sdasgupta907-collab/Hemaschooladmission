@@ -1389,282 +1389,158 @@ function proceedToAdmission() {
         });
     </script>
 
+
+
+
+
+
+
 <script>
-// Auto-load enquiry data when page loads
-window.addEventListener('DOMContentLoaded', function() {
-    const enquiryData = JSON.parse(localStorage.getItem('currentEnquiryData'));
-    if (enquiryData) {
-        console.log('Loading enquiry data...');
+const feeData = {
+    'NURSERY': {admission: 27000, development: 5000, caution: 3000},
+    'KG I': {admission: 27000, development: 5000, caution: 3000},
+    'KG II': {admission: 27000, development: 5000, caution: 3000},
+    'CLASS I': {admission: 30000, development: 5000, caution: 3000},
+    'CLASS II': {admission: 30000, development: 5000, caution: 3000},
+    'CLASS III': {admission: 30000, development: 5000, caution: 3000},
+    'CLASS IV': {admission: 30000, development: 5000, caution: 3000},
+    'CLASS V': {admission: 30000, development: 5000, caution: 3000},
+    'CLASS VI': {admission: 41000, development: 5000, caution: 3000},
+    'CLASS VII': {admission: 41000, development: 5000, caution: 3000},
+    'CLASS VIII': {admission: 41000, development: 5000, caution: 3000},
+    'CLASS IX': {admission: 55000, development: 5000, caution: 3000},
+    'CLASS X': {admission: 55000, development: 5000, caution: 3000},
+    'CLASS XI': {admission: 62000, development: 5000, caution: 3000},
+    'CLASS XII': {admission: 62000, development: 5000, caution: 3000}
+};
 
-        if (document.getElementById('regDate')) document.getElementById('regDate').value = enquiryData.date || '';
-        if (document.getElementById('regSno')) document.getElementById('regSno').value = enquiryData.sno || '';
-        if (document.getElementById('studentName')) document.getElementById('studentName').value = enquiryData.studentFirstName || '';
-        if (document.getElementById('studentMiddle')) document.getElementById('studentMiddle').value = enquiryData.studentMiddleName || '';
-        if (document.getElementById('studentSurname')) document.getElementById('studentSurname').value = enquiryData.studentSurname || '';
-        if (document.getElementById('class')) document.getElementById('class').value = enquiryData.classApplying || '';
-
-        const genderRadios = document.querySelectorAll('input[name="gender"]');
-        genderRadios.forEach(radio => {
-            if (radio.value.toUpperCase() === (enquiryData.gender || '').toUpperCase()) {
-                radio.checked = true;
-            }
-        });
-
-        if (document.getElementById('dob')) document.getElementById('dob').value = enquiryData.dob || '';
-        if (document.getElementById('motherName')) document.getElementById('motherName').value = enquiryData.motherFirstName || '';
-        if (document.getElementById('motherMiddle')) document.getElementById('motherMiddle').value = enquiryData.motherMiddleName || '';
-        if (document.getElementById('motherSurname')) document.getElementById('motherSurname').value = enquiryData.motherSurname || '';
-        if (document.getElementById('motherMobile')) document.getElementById('motherMobile').value = enquiryData.motherMobile || '';
-        if (document.getElementById('fatherName')) document.getElementById('fatherName').value = enquiryData.fatherFirstName || '';
-        if (document.getElementById('fatherMiddle')) document.getElementById('fatherMiddle').value = enquiryData.fatherMiddleName || '';
-        if (document.getElementById('fatherSurname')) document.getElementById('fatherSurname').value = enquiryData.fatherSurname || '';
-        if (document.getElementById('fatherMobile')) document.getElementById('fatherMobile').value = enquiryData.fatherMobile || '';
-        if (document.getElementById('landline')) document.getElementById('landline').value = enquiryData.landline || '';
-        if (document.getElementById('address')) document.getElementById('address').value = enquiryData.address || '';
-        if (document.getElementById('area')) document.getElementById('area').value = enquiryData.area || '';
-        if (document.getElementById('state')) document.getElementById('state').value = enquiryData.state || '';
-
-        alert('✅ Registration form loaded with enquiry data!');
-    }
-});
-
-// Save and proceed to admission
-function proceedToAdmission() {
-    const regData = {
-        regDate: document.getElementById('regDate')?.value || '',
-        regSno: document.getElementById('regSno')?.value || '',
-        studentName: document.getElementById('studentName')?.value || '',
-        studentMiddle: document.getElementById('studentMiddle')?.value || '',
-        studentSurname: document.getElementById('studentSurname')?.value || '',
-        class: document.getElementById('class')?.value || '',
-        gender: document.querySelector('input[name="gender"]:checked')?.value || '',
-        dob: document.getElementById('dob')?.value || '',
-        motherName: document.getElementById('motherName')?.value || '',
-        motherMiddle: document.getElementById('motherMiddle')?.value || '',
-        motherSurname: document.getElementById('motherSurname')?.value || '',
-        motherMobile: document.getElementById('motherMobile')?.value || '',
-        fatherName: document.getElementById('fatherName')?.value || '',
-        fatherMiddle: document.getElementById('fatherMiddle')?.value || '',
-        fatherSurname: document.getElementById('fatherSurname')?.value || '',
-        fatherMobile: document.getElementById('fatherMobile')?.value || '',
-        landline: document.getElementById('landline')?.value || '',
-        address: document.getElementById('address')?.value || '',
-        area: document.getElementById('area')?.value || '',
-        state: document.getElementById('state')?.value || '',
-        signatoryName: document.getElementById('signatoryName')?.value || ''
-    };
-
-    if (!regData.studentName || !regData.class || !regData.fatherMobile) {
-        alert('❌ Please fill required fields');
+function fillFromCurrentEnquiry() {
+    const raw = localStorage.getItem('currentEnquiry');
+    if (!raw) {
+        console.log('No enquiry data found');
         return;
     }
 
-    localStorage.setItem('currentRegistrationData', JSON.stringify(regData));
+    const enq = JSON.parse(raw);
+    console.log('Loading enquiry data:', enq);
 
-    let regRecords = JSON.parse(localStorage.getItem('registrationRecords')) || [];
-    regRecords.push(regData);
-    localStorage.setItem('registrationRecords', JSON.stringify(regRecords));
+    const setVal = (id, v) => {
+        const el = document.getElementById(id);
+        if (el && v != null) el.value = v;
+    };
 
-    alert('✅ Registration saved! Proceeding to Admission...');
-    window.location.href = 'COMPLETE-ADMISSION-FORM.html';
-}
-</script>
+    setVal('date', enq.date || new Date().toISOString().split('T')[0]);
+    setVal('sno', enq.sno || '');
+    setVal('studentFirst', enq.studentFirst || '');
+    setVal('studentMiddle', enq.studentMiddle || '');
+    setVal('studentSurname', enq.studentSurname || '');
+    setVal('classApplied', enq.classApplied || '');
+    setVal('dob', enq.dob || '');
+    setVal('motherFirst', enq.motherFirst || '');
+    setVal('motherMiddle', enq.motherMiddle || '');
+    setVal('motherSurname', enq.motherSurname || '');
+    setVal('motherMobile', enq.motherMobile || '');
+    setVal('fatherFirst', enq.fatherFirst || '');
+    setVal('fatherMiddle', enq.fatherMiddle || '');
+    setVal('fatherSurname', enq.fatherSurname || '');
+    setVal('fatherMobile', enq.fatherMobile || '');
+    setVal('landline', enq.landline || '');
+    setVal('address', enq.address || '');
+    setVal('area', enq.area || '');
+    setVal('state', enq.state || 'MADHYA PRADESH');
+    setVal('sib1Name', enq.sib1Name || '');
+    setVal('sib1School', enq.sib1School || '');
 
+    const sib1Cls = enq.sib1Class || '';
+    const sib1Sec = enq.sib1Section || '';
+    setVal('sib1ClassSec', (sib1Cls + (sib1Sec ? ' ' + sib1Sec : '')).trim());
 
+    setVal('sib2Name', enq.sib2Name || '');
+    setVal('sib2School', enq.sib2School || '');
 
-<script>
-console.log('🟢 REGISTRATION FORM: Loading scripts...');
+    const sib2Cls = enq.sib2Class || '';
+    const sib2Sec = enq.sib2Section || '';
+    setVal('sib2ClassSec', (sib2Cls + (sib2Sec ? ' ' + sib2Sec : '')).trim());
 
-// ============================================================================
-// AUTO-LOAD ENQUIRY DATA ON PAGE LOAD
-// ============================================================================
-window.addEventListener('DOMContentLoaded', function() {
-    console.log('📄 Registration form loaded');
-
-    // Get enquiry data from localStorage
-    const enquiryData = JSON.parse(localStorage.getItem('currentEnquiryData'));
-
-    if (enquiryData) {
-        console.log('📂 Found enquiry data, auto-filling form...');
-        console.log('Data:', enquiryData);
-
-        // Fill all matching fields automatically
-        Object.keys(enquiryData).forEach(function(key) {
-            const field = document.getElementById(key);
-            if (field) {
-                if (field.type === 'radio') {
-                    const radio = document.querySelector('input[name="' + key + '"][value="' + enquiryData[key] + '"]');
-                    if (radio) {
-                        radio.checked = true;
-                        console.log('Set radio:', key, '=', enquiryData[key]);
-                    }
-                } else if (field.type === 'checkbox') {
-                    field.checked = enquiryData[key] === true || enquiryData[key] === 'true';
-                } else {
-                    field.value = enquiryData[key] || '';
-                    console.log('Set field:', key, '=', enquiryData[key]);
-                }
-            }
+    if (enq.gender) {
+        const radios = document.querySelectorAll('input[name="gender"]');
+        radios.forEach(r => {
+            if (r.value.toUpperCase() === enq.gender.toUpperCase()) r.checked = true;
         });
+    }
 
-        // Handle gender radio buttons specifically
-        if (enquiryData.gender) {
-            const genderRadios = document.querySelectorAll('input[name="gender"]');
-            genderRadios.forEach(function(radio) {
-                if (radio.value.toUpperCase() === enquiryData.gender.toUpperCase()) {
-                    radio.checked = true;
-                }
-            });
-        }
+    const cls = enq.classApplied;
+    if (cls && feeData[cls]) {
+        const feeAdm = document.getElementById('feeAdmission');
+        const feeDev = document.getElementById('feeDevelopment');
+        const feeCau = document.getElementById('feeCaution');
+        const feeTotal = document.getElementById('totalFee');
 
-        alert('✅ SUCCESS!\n\nRegistration form loaded with your enquiry data!\n\nPlease review and complete the registration.');
-        console.log('✅ All fields auto-filled from enquiry data');
-    } else {
-        console.log('⚠️ No enquiry data found in localStorage');
+        if (feeAdm) feeAdm.value = feeData[cls].admission;
+        if (feeDev) feeDev.value = feeData[cls].development;
+        if (feeCau) feeCau.value = feeData[cls].caution;
+        if (feeTotal) feeTotal.value = feeData[cls].admission + feeData[cls].development + feeData[cls].caution;
+    }
+
+    alert('✓ Registration form auto-filled from enquiry data!');
+}
+
+function saveRegistration() {
+    const form = document.getElementById('registrationForm');
+    if (!form.checkValidity()) {
+        alert('Please fill all required fields before saving.');
+        form.reportValidity();
+        return false;
+    }
+
+    const formData = new FormData(form);
+    const data = {};
+    for (const [k, v] of formData.entries()) data[k] = v;
+
+    data.timestamp = new Date().toISOString();
+    data.saveddate = new Date().toLocaleString('en-IN', { timeZone: 'Asia/Kolkata' });
+    data.regSno = data.sno;
+    data.regDate = data.date;
+
+    let regs = JSON.parse(localStorage.getItem('registrationRecords') || '[]');
+    regs.push(data);
+    localStorage.setItem('registrationRecords', JSON.stringify(regs));
+    localStorage.setItem('currentRegistration', JSON.stringify(data));
+
+    console.log('✓ Registration saved:', data);
+    alert('✓ Registration saved successfully!');
+    return true;
+}
+
+function proceedToAdmission() {
+    if (!saveRegistration()) return;
+
+    alert('Proceeding to Admission Form...');
+    setTimeout(() => {
+        window.location.href = 'admission-CONNECTED.html';
+    }, 500);
+}
+
+function generatePDF() {
+    window.print();
+}
+
+window.addEventListener('DOMContentLoaded', function() {
+    fillFromCurrentEnquiry();
+
+    document.querySelectorAll('.uppercase').forEach(input => {
+        input.addEventListener('input', function() {
+            this.value = this.value.toUpperCase();
+        });
+    });
+
+    const dateField = document.getElementById('date');
+    if (dateField && !dateField.value) {
+        dateField.valueAsDate = new Date();
     }
 });
 
-// ============================================================================
-// PROCEED TO ADMISSION - SAVES AND REDIRECTS
-// ============================================================================
-function proceedToAdmission() {
-    console.log('➡️ proceedToAdmission() called');
-
-    // Collect registration data
-    const registrationData = {
-        sno: document.getElementById('sno')?.value || '',
-        date: document.getElementById('date')?.value || '',
-        studentFirstName: document.getElementById('studentFirstName')?.value || '',
-        studentMiddleName: document.getElementById('studentMiddleName')?.value || '',
-        studentSurname: document.getElementById('studentSurname')?.value || '',
-        gender: document.querySelector('input[name="gender"]:checked')?.value || '',
-        classApplying: document.getElementById('classApplying')?.value || '',
-        dob: document.getElementById('dob')?.value || '',
-        currentAge: document.getElementById('currentAge')?.value || '',
-        fatherFirstName: document.getElementById('fatherFirstName')?.value || '',
-        fatherMiddleName: document.getElementById('fatherMiddleName')?.value || '',
-        fatherSurname: document.getElementById('fatherSurname')?.value || '',
-        motherFirstName: document.getElementById('motherFirstName')?.value || '',
-        motherMiddleName: document.getElementById('motherMiddleName')?.value || '',
-        motherSurname: document.getElementById('motherSurname')?.value || '',
-        fatherMobile: document.getElementById('fatherMobile')?.value || '',
-        motherMobile: document.getElementById('motherMobile')?.value || '',
-        landline: document.getElementById('landline')?.value || '',
-        address: document.getElementById('address')?.value || '',
-        area: document.getElementById('area')?.value || '',
-        city: document.getElementById('city')?.value || '',
-        district: document.getElementById('district')?.value || '',
-        state: document.getElementById('state')?.value || '',
-        pincode: document.getElementById('pincode')?.value || '',
-        country: document.getElementById('country')?.value || '',
-        timestamp: new Date().toISOString()
-    };
-
-    console.log('📋 Registration data collected');
-
-    // Validation
-    if (!registrationData.studentFirstName || registrationData.studentFirstName.trim() === '') {
-        alert('❌ ERROR: Please enter Student First Name');
-        document.getElementById('studentFirstName')?.focus();
-        return false;
-    }
-
-    try {
-        // Save to registrationRecords array
-        let registrationRecords = JSON.parse(localStorage.getItem('registrationRecords')) || [];
-        registrationRecords.push(registrationData);
-        localStorage.setItem('registrationRecords', JSON.stringify(registrationRecords));
-
-        // Save as current for admission form
-        localStorage.setItem('currentRegistrationData', JSON.stringify(registrationData));
-
-        console.log('💾 Registration saved');
-        console.log('📊 Total registrations:', registrationRecords.length);
-
-        alert('✅ SUCCESS!\n\nRegistration saved successfully!\n\nProceeding to Admission Form...');
-
-        // Redirect to admission form
-        setTimeout(function() {
-            window.location.href = 'WORKING-ADMISSION-FORM.html';
-        }, 500);
-
-        return true;
-
-    } catch (error) {
-        console.error('❌ Error:', error);
-        alert('❌ ERROR: Failed to save registration\n\nError: ' + error.message);
-        return false;
-    }
-}
-
-console.log('✅ Registration form scripts loaded successfully');
-
-    // Check for edit data on page load
-    window.addEventListener('DOMContentLoaded', function() {
-        const editData = localStorage.getItem('editRegistrationData');
-        if (editData) {
-            try {
-                const data = JSON.parse(editData);
-                console.log('Loading registration edit data:', data);
-
-                // Populate fields
-                if (data.date && document.getElementById('date')) document.getElementById('date').value = data.date;
-                if (data.sno && document.getElementById('sno')) document.getElementById('sno').value = data.sno;
-                if (data.studentFirst && document.getElementById('studentFirst')) document.getElementById('studentFirst').value = data.studentFirst;
-                if (data.studentMiddle && document.getElementById('studentMiddle')) document.getElementById('studentMiddle').value = data.studentMiddle;
-                if (data.studentSurname && document.getElementById('studentSurname')) document.getElementById('studentSurname').value = data.studentSurname;
-                if (data.classApplied && document.getElementById('classApplied')) document.getElementById('classApplied').value = data.classApplied;
-                if (data.dob && document.getElementById('dob')) document.getElementById('dob').value = data.dob;
-
-                // Gender - handle radio buttons
-                if (data.gender === 'Male' && document.getElementById('genderMale')) {
-                    document.getElementById('genderMale').checked = true;
-                } else if (data.gender === 'Female' && document.getElementById('genderFemale')) {
-                    document.getElementById('genderFemale').checked = true;
-                }
-
-                // Parent information
-                if (data.fatherFirst && document.getElementById('fatherFirst')) document.getElementById('fatherFirst').value = data.fatherFirst;
-                if (data.fatherMiddle && document.getElementById('fatherMiddle')) document.getElementById('fatherMiddle').value = data.fatherMiddle;
-                if (data.fatherSurname && document.getElementById('fatherSurname')) document.getElementById('fatherSurname').value = data.fatherSurname;
-                if (data.fatherMobile && document.getElementById('fatherMobile')) document.getElementById('fatherMobile').value = data.fatherMobile;
-                if (data.motherFirst && document.getElementById('motherFirst')) document.getElementById('motherFirst').value = data.motherFirst;
-                if (data.motherMiddle && document.getElementById('motherMiddle')) document.getElementById('motherMiddle').value = data.motherMiddle;
-                if (data.motherSurname && document.getElementById('motherSurname')) document.getElementById('motherSurname').value = data.motherSurname;
-                if (data.motherMobile && document.getElementById('motherMobile')) document.getElementById('motherMobile').value = data.motherMobile;
-                if (data.landline && document.getElementById('landline')) document.getElementById('landline').value = data.landline;
-
-                // Address
-                if (data.address && document.getElementById('address')) document.getElementById('address').value = data.address;
-                if (data.area && document.getElementById('area')) document.getElementById('area').value = data.area;
-                if (data.state && document.getElementById('state')) document.getElementById('state').value = data.state;
-
-                // Sibling information
-                if (data.sib1Name && document.getElementById('sib1Name')) document.getElementById('sib1Name').value = data.sib1Name;
-                if (data.sib1School && document.getElementById('sib1School')) document.getElementById('sib1School').value = data.sib1School;
-                if (data.sib1ClassSec && document.getElementById('sib1ClassSec')) document.getElementById('sib1ClassSec').value = data.sib1ClassSec;
-                if (data.sib2Name && document.getElementById('sib2Name')) document.getElementById('sib2Name').value = data.sib2Name;
-                if (data.sib2School && document.getElementById('sib2School')) document.getElementById('sib2School').value = data.sib2School;
-                if (data.sib2ClassSec && document.getElementById('sib2ClassSec')) document.getElementById('sib2ClassSec').value = data.sib2ClassSec;
-
-                // Fee information
-                if (data.feeAdmission && document.getElementById('feeAdmission')) document.getElementById('feeAdmission').value = data.feeAdmission;
-                if (data.feeDevelopment && document.getElementById('feeDevelopment')) document.getElementById('feeDevelopment').value = data.feeDevelopment;
-                if (data.feeCaution && document.getElementById('feeCaution')) document.getElementById('feeCaution').value = data.feeCaution;
-                if (data.totalFee && document.getElementById('totalFee')) document.getElementById('totalFee').value = data.totalFee;
-
-                // Clear the localStorage after loading
-                localStorage.removeItem('editRegistrationData');
-
-                // Alert user
-                alert('✏️ Edit Mode: Registration form loaded with existing data. Modify and save to update.');
-            } catch (error) {
-                console.error('Error loading registration edit data:', error);
-            }
-        }
-    });
-
+console.log('✓ REGISTRATION FORM LOADED');
 </script>
-
 </body>
 </html>
