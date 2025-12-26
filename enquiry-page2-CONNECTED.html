@@ -1233,344 +1233,280 @@
     </div>
     </div>
 <script>
-    // FEE DATA
-    const feeData = {
-        'nursery': { admission: 27000, development: 5000, caution: 3000, tuition: 14645, annual: 6955, monthly: 2400 },
-        '1': { admission: 30000, development: 5000, caution: 3000, tuition: 21296, annual: 9754, monthly: 3450 },
-        '2': { admission: 30000, development: 5000, caution: 3000, tuition: 22634, annual: 13906, monthly: 4060 },
-        '3': { admission: 30000, development: 5000, caution: 3000, tuition: 23954, annual: 15304, monthly: 4362 },
-        '4': { admission: 30000, development: 5000, caution: 3000, tuition: 26620, annual: 17390, monthly: 4890 },
-        '6': { admission: 41000, development: 5000, caution: 3000, tuition: 29280, annual: 17385, monthly: 5185 },
-        '9': { admission: 55000, development: 5000, caution: 3000, tuition: 29286, annual: 23634, monthly: 5880 },
-        '11sci': { admission: 62000, development: 5000, caution: 3000, tuition: 29280, annual: 25044, monthly: 6036 },
-        '11sci2': { admission: 62000, development: 5000, caution: 3000, tuition: 29286, annual: 18090, monthly: 5264 },
-        '11comm': { admission: 62000, development: 5000, caution: 3000, tuition: 29286, annual: 23526, monthly: 5868 },
-        '11hum': { admission: 62000, development: 5000, caution: 3000, tuition: 29290, annual: 16700, monthly: 5110 }
+/* FEE DATA */
+const feeData = {
+    nursery: { admission: 27000, development: 5000, caution: 3000, tuition: 14645, annual: 6955, monthly: 2400 },
+    1: { admission: 30000, development: 5000, caution: 3000, tuition: 21296, annual: 9754, monthly: 3450 },
+    2: { admission: 30000, development: 5000, caution: 3000, tuition: 22634, annual: 13906, monthly: 4060 },
+    3: { admission: 30000, development: 5000, caution: 3000, tuition: 23954, annual: 15304, monthly: 4362 },
+    4: { admission: 30000, development: 5000, caution: 3000, tuition: 26620, annual: 17390, monthly: 4890 },
+    6: { admission: 41000, development: 5000, caution: 3000, tuition: 29280, annual: 17385, monthly: 5185 },
+    9: { admission: 55000, development: 5000, caution: 3000, tuition: 29286, annual: 23634, monthly: 5880 },
+    '11sci': { admission: 62000, development: 5000, caution: 3000, tuition: 29280, annual: 25044, monthly: 6036 },
+    '11sci2': { admission: 62000, development: 5000, caution: 3000, tuition: 29286, annual: 18090, monthly: 5264 },
+    '11comm': { admission: 62000, development: 5000, caution: 3000, tuition: 29286, annual: 23526, monthly: 5868 },
+    '11hum': { admission: 62000, development: 5000, caution: 3000, tuition: 29290, annual: 16700, monthly: 5110 }
+};
+
+function formatCurrency(amount) {
+    return amount.toLocaleString('en-IN');
+}
+
+function calculateFees() {
+    const selectedClass = document.getElementById('feeClass').value;
+    const isSibling = document.getElementById('siblingDiscount').checked;
+    const feeDisplay = document.getElementById('feeDisplay');
+
+    if (!selectedClass) {
+        feeDisplay.style.display = 'none';
+        return;
+    }
+
+    feeDisplay.style.display = 'block';
+    const fees = feeData[selectedClass];
+
+    let admissionFee = fees.admission;
+    let tuitionFee = fees.tuition;
+
+    if (isSibling) {
+        admissionFee = Math.round(fees.admission * 0.5);
+        tuitionFee = Math.round(fees.tuition * 0.5);
+    }
+
+    const developmentFund = fees.development;
+    const cautionMoney = fees.caution;
+    const annualCharges = fees.annual;
+
+    let monthlyInstallment = fees.monthly;
+    if (isSibling) {
+        monthlyInstallment = Math.round((tuitionFee + annualCharges) / 9);
+    }
+
+    const totalAdmission = admissionFee + developmentFund + cautionMoney;
+    const totalAnnual = tuitionFee + annualCharges;
+    const grandTotal = totalAdmission + totalAnnual;
+
+    const discount8Percent = Math.round(totalAnnual * 0.08);
+    const discount5Percent = Math.round(totalAnnual * 0.05);
+    const after8Discount = totalAdmission + (totalAnnual - discount8Percent);
+    const after5Discount = totalAdmission + (totalAnnual - discount5Percent);
+
+    document.getElementById('admissionFee').textContent = formatCurrency(admissionFee);
+    document.getElementById('developmentFund').textContent = formatCurrency(developmentFund);
+    document.getElementById('cautionMoney').textContent = formatCurrency(cautionMoney);
+    document.getElementById('totalAdmission').textContent = formatCurrency(totalAdmission);
+    document.getElementById('tuitionFee').textContent = formatCurrency(tuitionFee);
+    document.getElementById('annualCharges').textContent = formatCurrency(annualCharges);
+    document.getElementById('totalAnnual').textContent = formatCurrency(totalAnnual);
+    document.getElementById('monthlyInstallment').textContent = formatCurrency(monthlyInstallment);
+    document.getElementById('grandAdmission').textContent = formatCurrency(totalAdmission);
+    document.getElementById('grandAnnual').textContent = formatCurrency(totalAnnual);
+    document.getElementById('grandTotal').textContent = formatCurrency(grandTotal);
+    document.getElementById('discount8').textContent = formatCurrency(discount8Percent);
+    document.getElementById('after8Discount').textContent = formatCurrency(after8Discount);
+    document.getElementById('discount5').textContent = formatCurrency(discount5Percent);
+    document.getElementById('after5Discount').textContent = formatCurrency(after5Discount);
+}
+
+function calculateAge(dob, asOfDate) {
+    const dobDate = new Date(dob);
+    const refDate = asOfDate ? new Date(asOfDate) : new Date();
+
+    let years = refDate.getFullYear() - dobDate.getFullYear();
+    let months = refDate.getMonth() - dobDate.getMonth();
+    let days = refDate.getDate() - dobDate.getDate();
+
+    if (days < 0) {
+        months--;
+        days += new Date(refDate.getFullYear(), refDate.getMonth(), 0).getDate();
+    }
+
+    if (months < 0) {
+        years--;
+        months += 12;
+    }
+
+    return { years, months, days };
+}
+
+function updateAgeDisplays() {
+    const dob = document.getElementById('dob').value;
+    const selectedClass = document.getElementById('classApplied').value;
+
+    if (!dob) {
+        document.getElementById('ageDisplay').innerHTML = '-- Select DOB --';
+        document.getElementById('ageAsOnGroup').style.display = 'none';
+        return;
+    }
+
+    const currentAge = calculateAge(dob);
+    document.getElementById('ageDisplay').innerHTML = `<strong>${currentAge.years}</strong> Years <strong>${currentAge.months}</strong> Months <strong>${currentAge.days}</strong> Days`;
+
+    const ageAsOnGroup = document.getElementById('ageAsOnGroup');
+    const ageAsOnLabel = document.getElementById('ageAsOnLabel');
+    const ageAsOnDisplay = document.getElementById('ageAsOnDisplay');
+    const ageAsOnInfo = document.getElementById('ageAsOnInfo');
+
+    if (selectedClass === 'NURSERY' || selectedClass === 'KG I' || selectedClass === 'KG II') {
+        const ageAsOn31July = calculateAge(dob, '2026-07-31');
+        ageAsOnGroup.style.display = 'block';
+        ageAsOnLabel.textContent = 'AGE AS ON 31 JULY 2026';
+        ageAsOnDisplay.innerHTML = `<strong>${ageAsOn31July.years}</strong> Y <strong>${ageAsOn31July.months}</strong> M <strong>${ageAsOn31July.days}</strong> D`;
+        ageAsOnInfo.textContent = 'For Nursery, KG I & KG II admission';
+    } else if (selectedClass === 'CLASS I') {
+        const ageAsOn30Sept = calculateAge(dob, '2026-09-30');
+        ageAsOnGroup.style.display = 'block';
+        ageAsOnLabel.textContent = 'AGE AS ON 30 SEPT 2026';
+        ageAsOnDisplay.innerHTML = `<strong>${ageAsOn30Sept.years}</strong> Y <strong>${ageAsOn30Sept.months}</strong> M <strong>${ageAsOn30Sept.days}</strong> D`;
+        ageAsOnInfo.textContent = 'For Class I admission';
+    } else {
+        ageAsOnGroup.style.display = 'none';
+    }
+}
+
+document.querySelectorAll('.uppercase').forEach(input => {
+    input.addEventListener('input', function() {
+        this.value = this.value.toUpperCase();
+    });
+});
+
+/* LOAD PAGE 1 DATA AND POPULATE */
+window.addEventListener('load', function() {
+    let records = JSON.parse(localStorage.getItem('enquiryRecords') || '[]');
+    const nextNum = 2026001 + records.length;
+    const snoField = document.getElementById('sno');
+    if (snoField) snoField.value = nextNum.toString();
+
+    const saved = localStorage.getItem('enquiryPage1');
+    if (!saved) {
+        console.log('No Page 1 data found');
+        return;
+    }
+
+    let page1Data;
+    try {
+        page1Data = JSON.parse(saved);
+    } catch(e) {
+        console.error('Error parsing Page 1 data:', e);
+        return;
+    }
+
+    if (!page1Data) return;
+
+    const setText = (id, value) => {
+        const el = document.getElementById(id);
+        if (el && value != null) el.textContent = value;
     };
 
-    function formatCurrency(amount) {
-        return amount.toLocaleString('en-IN');
-    }
+    const fullName = (f, m, s) => [f, m, s].filter(Boolean).join(' ').toUpperCase();
 
-    function calculateFees() {
-        const selectedClass = document.getElementById('feeClass').value;
-        const isSibling = document.getElementById('siblingDiscount').checked;
-        const feeDisplay = document.getElementById('feeDisplay');
+    setText('summary-sno', page1Data.sno || '');
+    setText('summary-date', page1Data.date ? new Date(page1Data.date).toLocaleDateString('en-IN') : '');
+    setText('summary-student-name', fullName(page1Data.studentFirst, page1Data.studentMiddle, page1Data.studentSurname));
+    setText('summary-class', page1Data.classApplied || '');
+    setText('summary-father', fullName(page1Data.fatherFirst, page1Data.fatherMiddle, page1Data.fatherSurname));
+    setText('summary-mobile', page1Data.fatherMobile || '');
 
-        if (!selectedClass) {
-            feeDisplay.style.display = 'none';
-            return;
-        }
+    const classMap = {
+        'NURSERY': 'nursery', 'KG I': 'nursery', 'KG II': 'nursery',
+        'CLASS I': '1', 'CLASS II': '2', 'CLASS III': '3',
+        'CLASS IV': '4', 'CLASS V': '4',
+        'CLASS VI': '6', 'CLASS VII': '6', 'CLASS VIII': '6',
+        'CLASS IX': '9', 'CLASS X': '9',
+        'CLASS XI': '11sci', 'CLASS XII': '11sci'
+    };
 
-        feeDisplay.style.display = 'block';
-
-        const fees = feeData[selectedClass];
-        let admissionFee = fees.admission;
-        let tuitionFee = fees.tuition;
-
-        if (isSibling) {
-            admissionFee = Math.round(fees.admission * 0.5);
-            tuitionFee = Math.round(fees.tuition * 0.5);
-        }
-
-        const developmentFund = fees.development;
-        const cautionMoney = fees.caution;
-        const annualCharges = fees.annual;
-        // Calculate monthly installment based on discounted tuition fee
-        let monthlyInstallment = fees.monthly;
-        if (isSibling) {
-            // Monthly installment should be based on discounted tuition + annual charges / 9
-            monthlyInstallment = Math.round((tuitionFee + annualCharges) / 9);
-        }
-
-        const totalAdmission = admissionFee + developmentFund + cautionMoney;
-        const totalAnnual = tuitionFee + annualCharges;
-        const grandTotal = totalAdmission + totalAnnual;
-
-        const discount8Percent = Math.round(totalAnnual * 0.08);
-        const discount5Percent = Math.round(totalAnnual * 0.05);
-        const after8Discount = totalAdmission + (totalAnnual - discount8Percent);
-        const after5Discount = totalAdmission + (totalAnnual - discount5Percent);
-
-        document.getElementById('admissionFee').textContent = formatCurrency(admissionFee);
-        document.getElementById('developmentFund').textContent = formatCurrency(developmentFund);
-        document.getElementById('cautionMoney').textContent = formatCurrency(cautionMoney);
-        document.getElementById('totalAdmission').textContent = formatCurrency(totalAdmission);
-
-        document.getElementById('tuitionFee').textContent = formatCurrency(tuitionFee);
-        document.getElementById('annualCharges').textContent = formatCurrency(annualCharges);
-        document.getElementById('totalAnnual').textContent = formatCurrency(totalAnnual);
-        document.getElementById('monthlyInstallment').textContent = formatCurrency(monthlyInstallment);
-
-        document.getElementById('grandAdmission').textContent = formatCurrency(totalAdmission);
-        document.getElementById('grandAnnual').textContent = formatCurrency(totalAnnual);
-        document.getElementById('grandTotal').textContent = formatCurrency(grandTotal);
-
-        document.getElementById('discount8').textContent = formatCurrency(discount8Percent);
-        document.getElementById('after8Discount').textContent = formatCurrency(after8Discount);
-        document.getElementById('discount5').textContent = formatCurrency(discount5Percent);
-        document.getElementById('after5Discount').textContent = formatCurrency(after5Discount);
-    }
-
-    // AGE CALCULATION
-    function calculateAge(dob, asOfDate) {
-        const dobDate = new Date(dob);
-        const refDate = asOfDate ? new Date(asOfDate) : new Date();
-
-        let years = refDate.getFullYear() - dobDate.getFullYear();
-        let months = refDate.getMonth() - dobDate.getMonth();
-        let days = refDate.getDate() - dobDate.getDate();
-
-        if (days < 0) {
-            months--;
-            days += new Date(refDate.getFullYear(), refDate.getMonth(), 0).getDate();
-        }
-
-        if (months < 0) {
-            years--;
-            months += 12;
-        }
-
-        return { years, months, days };
-    }
-
-    function updateAgeDisplays() {
-        const dob = document.getElementById('dob').value;
-        const selectedClass = document.getElementById('classApplied').value;
-
-        if (!dob) {
-            document.getElementById('ageDisplay').innerHTML = "-- Select DOB --";
-            document.getElementById('ageAsOnGroup').style.display = 'none';
-            return;
-        }
-
-        // Current age
-        const currentAge = calculateAge(dob);
-        document.getElementById('ageDisplay').innerHTML = `<strong>${currentAge.years}</strong> Years <strong>${currentAge.months}</strong> Months <strong>${currentAge.days}</strong> Days`;
-
-        // Age as on specific date based on class
-        const ageAsOnGroup = document.getElementById('ageAsOnGroup');
-        const ageAsOnLabel = document.getElementById('ageAsOnLabel');
-        const ageAsOnDisplay = document.getElementById('ageAsOnDisplay');
-        const ageAsOnInfo = document.getElementById('ageAsOnInfo');
-
-        if (selectedClass === 'NURSERY' || selectedClass === 'KG I' || selectedClass === 'KG II') {
-            // Age as on 31 July 2026
-            const ageAsOn31July = calculateAge(dob, '2026-07-31');
-            ageAsOnGroup.style.display = 'block';
-            ageAsOnLabel.textContent = 'AGE AS ON 31 JULY 2026';
-            ageAsOnDisplay.innerHTML = `<strong>${ageAsOn31July.years}</strong> Y <strong>${ageAsOn31July.months}</strong> M <strong>${ageAsOn31July.days}</strong> D`;
-            ageAsOnInfo.textContent = 'For Nursery, KG I & KG II admission';
-        } else if (selectedClass === 'I') {
-            // Age as on 30 Sept 2026
-            const ageAsOn30Sept = calculateAge(dob, '2026-09-30');
-            ageAsOnGroup.style.display = 'block';
-            ageAsOnLabel.textContent = 'AGE AS ON 30 SEPT 2026';
-            ageAsOnDisplay.innerHTML = `<strong>${ageAsOn30Sept.years}</strong> Y <strong>${ageAsOn30Sept.months}</strong> M <strong>${ageAsOn30Sept.days}</strong> D`;
-            ageAsOnInfo.textContent = 'For Class I admission';
-        } else {
-            ageAsOnGroup.style.display = 'none';
-        }
-    }
-
-    document.getElementById('dob').addEventListener('change', updateAgeDisplays);
-    document.getElementById('classApplied').addEventListener('change', updateAgeDisplays);
-
-    // AUTO-UPPERCASE
-    document.querySelectorAll('.uppercase').forEach(input => {
-        input.addEventListener('input', function () {
-            this.value = this.value.toUpperCase();
-        });
-    });
-
-    // SET TODAY'S DATE
-    document.getElementById('date').valueAsDate = new Date();
-
-    // ✅ AUTO-GENERATE S.NO STARTING FROM 2026001
-    window.addEventListener('load', function () {
-        let records = JSON.parse(localStorage.getItem('enquiryRecords') || '[]');
-        const nextNum = 2026001 + records.length;
-        document.getElementById('sno').value = nextNum.toString();
-    });
-
-    // PRINT FUNCTION
-    function printForm() {
-        window.print();
-    }
-
-    // SAVE ENQUIRY FUNCTION
-    
-// LOAD PAGE 1 DATA AND POPULATE SUMMARY
-window.addEventListener('load', function() {
-    const page1Data = JSON.parse(localStorage.getItem('enquiryPage1') || '{}');
-
-    // Populate summary
-    document.getElementById('summary-sno').textContent = page1Data.sno || '-';
-    document.getElementById('summary-date').textContent = page1Data.date ? 
-        new Date(page1Data.date).toLocaleDateString('en-IN') : 'DD/MM/YYYY';
-    document.getElementById('summary-student-name').textContent = 
-        [page1Data.studentFirst, page1Data.studentMiddle, page1Data.studentSurname]
-        .filter(Boolean).join(' ') || '-';
-    document.getElementById('summary-class').textContent = page1Data.classApplied || '-';
-    document.getElementById('summary-father').textContent = 
-        [page1Data.fatherFirst, page1Data.fatherMiddle, page1Data.fatherSurname]
-        .filter(Boolean).join(' ') || '-';
-    document.getElementById('summary-mobile').textContent = page1Data.fatherMobile || '-';
-
-    // Auto-trigger fee calculation
     if (page1Data.classApplied) {
         const feeClassField = document.getElementById('feeClass');
-        if (feeClassField) {
-            // Map classApplied to feeClass options
-            const classMap = {
-                'NURSERY': 'nursery',
-                'KG I': 'nursery',
-                'KG II': 'nursery',
-                'I': '1',
-                'II': '2',
-                'III': '3',
-                'IV': '4',
-                'V': '4',
-                'VI': '6',
-                'VII': '6',
-                'VIII': '6',
-                'IX': '9',
-                'X': '9',
-                'XI': '11sci',
-                'XII': '11sci'
-            };
-            feeClassField.value = classMap[page1Data.classApplied] || '';
+        if (feeClassField && classMap[page1Data.classApplied]) {
+            feeClassField.value = classMap[page1Data.classApplied];
             setTimeout(function() {
                 if (typeof calculateFees === 'function') calculateFees();
             }, 300);
         }
     }
 
-    console.log('✅ Page 2 loaded with Page 1 data');
+    console.log('✓ Page 2 loaded with Page 1 data');
 });
 
+function safeText(id) {
+    const el = document.getElementById(id);
+    if (!el) return '';
+    return el.textContent || el.value || '';
+}
+
 function saveCompleteEnquiry() {
-    const page1Data = JSON.parse(localStorage.getItem('enquiryPage1') || '{}');
+    const page1Data = JSON.parse(localStorage.getItem('enquiryPage1') || 'null') || {};
     const form = document.getElementById('enquiryForm');
     const formData = new FormData(form);
     const page2Data = {};
-    for (let [key, value] of formData.entries()) {
-        page2Data[key] = value;
-    }
 
-    // Merge both pages
-    const completeData = {...page1Data, ...page2Data};
+    for (const [k, v] of formData.entries()) page2Data[k] = v;
+
+    const completeData = { ...page1Data, ...page2Data };
     completeData.recordId = 'ENQ-' + Date.now();
     completeData.submittedDate = new Date().toLocaleDateString('en-IN');
     completeData.submittedTime = new Date().toLocaleTimeString('en-IN');
     completeData.timestamp = new Date().toISOString();
 
-    // Add fee details
-    completeData.feeClass = document.getElementById('feeClass')?.value || '';
-    completeData.grandTotal = document.getElementById('grandTotal')?.textContent || '0';
-    completeData.currentAge = document.getElementById('ageDisplay')?.textContent || '';
+    completeData.feeClass = safeText('feeClass');
+    completeData.grandTotal = safeText('grandTotal');
+    completeData.totalAdmission = safeText('totalAdmission');
+    completeData.totalAnnual = safeText('totalAnnual');
+    completeData.currentAge = safeText('ageDisplay');
 
-    // Get document checkboxes
     for (let i = 1; i <= 10; i++) {
         const doc = document.getElementById('doc' + i);
-        if (doc && doc.checked) {
-            completeData['doc' + i] = doc.value;
-        }
+        if (doc && doc.checked) completeData['doc' + i] = doc.value;
     }
 
-    // Save to localStorage
     let enquiries = JSON.parse(localStorage.getItem('enquiryRecords') || '[]');
     enquiries.unshift(completeData);
     localStorage.setItem('enquiryRecords', JSON.stringify(enquiries));
     localStorage.setItem('currentEnquiry', JSON.stringify(completeData));
 
-    alert('✅ SUCCESS! Complete Enquiry Saved!\nID: ' + completeData.recordId);
-    console.log('✅ Complete enquiry saved:', completeData);
+    console.log('✓ Complete enquiry saved:', completeData);
+    alert('SUCCESS! Complete Enquiry Saved! ' + completeData.recordId);
 
-    // Clear Page 1 data
     localStorage.removeItem('enquiryPage1');
-
     return true;
 }
 
 function saveEnquiry() {
-
-        console.log('Saving Enquiry...');
-
-        try {
-            const form = document.getElementById('enquiryForm');
-
-            // Validate using HTML5 validation
-            if (!form.checkValidity()) {
-                form.reportValidity();
-                return false;
-            }
-
-            // Get ALL form data using FormData
-            const formData = new FormData(form);
-            const enquiryData = {};
-
-            // Convert FormData to object
-            for (let [key, value] of formData.entries()) {
-                enquiryData[key] = value;
-            }
-
-            // Add metadata
-            enquiryData.submittedDate = new Date().toLocaleDateString('en-IN');
-            enquiryData.submittedTime = new Date().toLocaleTimeString('en-IN');
-            enquiryData.recordId = 'ENQ-' + Date.now();
-
-            // Add fee details from calculator
-            enquiryData.feeClass = document.getElementById('feeClass').value;
-            enquiryData.grandTotal = document.getElementById('grandTotal').textContent;
-            enquiryData.currentAge = document.getElementById('ageDisplay').textContent;
-            enquiryData.timestamp = new Date().toISOString();
-
-            // Get existing enquiries
-            let enquiries = JSON.parse(localStorage.getItem('enquiryRecords') || '[]');
-
-            // Add new enquiry
-            enquiries.unshift(enquiryData);
-
-            // Save to localStorage
-            localStorage.setItem('enquiryRecords', JSON.stringify(enquiries));
-
-            // Also save as current for registration
-            localStorage.setItem('currentEnquiry', JSON.stringify(enquiryData));
-
-            console.log('Enquiry saved successfully!', enquiryData);
-            alert(`✅ SUCCESS! Enquiry saved successfully! ID: ${enquiryData.recordId}`);
-
-            return true;
-        } catch (error) {
-            console.error('Error saving enquiry:', error);
-            alert('❌ ERROR: Failed to save - ' + error.message);
+    console.log('Saving Enquiry...');
+    try {
+        const form = document.getElementById('enquiryForm');
+        if (!form.checkValidity()) {
+            form.reportValidity();
             return false;
         }
+        return saveCompleteEnquiry();
+    } catch (error) {
+        console.error('Error saving enquiry:', error);
+        alert('ERROR: Failed to save - ' + error.message);
+        return false;
     }
+}
 
-    // PROCEED TO REGISTRATION
-    function proceedToRegistration() {
-        console.log('proceedToRegistration called');
-
-        // IMPORTANT: First save the enquiry data
-        const saved = saveEnquiry();
-
-        if (saved === true) {
-            console.log('Data saved successfully, proceeding to registration...');
-            alert('Proceeding to Registration Form... (enquiry data will be automatically filled!)');
-
-            // Small delay to ensure data is saved, then redirect
-            setTimeout(function () {
-                window.location.href = 'TESTED_3_registration-1.html';
-            }, 500);
-        } else {
-            console.log('Save failed, not proceeding to registration');
-        }
+function proceedToRegistration() {
+    console.log('proceedToRegistration called');
+    const saved = saveEnquiry();
+    if (saved === true) {
+        console.log('Data saved successfully, proceeding to registration...');
+        alert('Proceeding to Registration Form... enquiry data will be automatically filled!');
+        setTimeout(function() {
+            window.location.href = 'registration-CONNECTED.html';
+        }, 500);
+    } else {
+        console.log('Save failed, not proceeding to registration');
     }
+}
 
-    console.log('✅ ENQUIRY FORM LOADED SUCCESSFULLY!');
+function printForm() {
+    window.print();
+}
+
+console.log('✓ ENQUIRY FORM PAGE 2 LOADED SUCCESSFULLY!');
 </script>
-
 </body>
 </html>
