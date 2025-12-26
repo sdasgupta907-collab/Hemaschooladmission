@@ -326,13 +326,7 @@
             background: rgba(70, 130, 180, 0.1);
         }
 
-        .sibling-section {
-            background: #f8f9fa;
-            padding: 15px;
-            border-radius: 6px;
-            margin: 15px 0;
-            border: 1px solid #e0e0e0;
-        }
+        .sibling-section { padding: 8px 0; margin: 10px 0; }
 
         .sibling-section h3 {
             color: #1e3c72 !important;
@@ -404,6 +398,18 @@
                 size: A4 portrait;
                 margin: 8mm;
             }
+
+            input#sno {
+                display: inline-block !important;
+                border: none !important;
+                border-bottom: 1px solid #000 !important;
+                background: white !important;
+                color: #000 !important;
+                font-weight: bold !important;
+                visibility: visible !important;
+                opacity: 1 !important;
+            }
+
 
             * {
                 margin: 0;
@@ -643,22 +649,9 @@
                 font-weight: normal !important;
             }
 
-            textarea {
-                border: 1px solid #000 !important;
-                padding: 2px !important;
-                font-size: 9.5pt !important;
-                width: 100% !important;
-                background: white !important;
-                color: #000 !important;
-                line-height: 1.2 !important;
-                min-height: 20px !important;
-                max-height: 20px !important;
-                overflow: hidden !important;
-            }
+            textarea { border: none !important; border-bottom: 1px solid #000 !important; padding: 0 2px !important; font-size: 11pt !important; width: 100% !important; background: white !important; color: #000 !important; line-height: 1.2 !important; min-height: auto !important; max-height: none !important; height: auto !important; overflow: visible !important; resize: none !important; }
 
-            .sibling-section {
-                margin: 5px 0 !important;
-            }
+            .sibling-section { margin: 3px 0 !important; padding: 3px 0 !important; border: none !important; background: transparent !important; }
 
             .sibling-section h3 {
                 font-size: 10pt !important;
@@ -733,8 +726,36 @@
                 <div class="form-row">
                     <div class="form-group">
                         <label for="sno">S.NO.</label>
-                        <input type="text" id="sno" name="sno" value="" readonly style="background:#f0f0f0;font-weight:bold;color:#1e3c72;">
+                        <input type="text" id="sno" name="sno" value="2026001" style="background:#f0f0f0;font-weight:bold;color:#1e3c72;">
                     </div>
+
+<script>
+// S.NO AUTO-INCREMENT - WORKING VERSION
+(function() {
+    // Run immediately when script loads
+    var snoField = document.getElementById('sno');
+
+    if (snoField) {
+        var lastSNO = localStorage.getItem('lastEnquirySNO');
+
+        if (!lastSNO || lastSNO === 'null' || lastSNO === '') {
+            lastSNO = 2026000;
+        } else {
+            lastSNO = parseInt(lastSNO, 10);
+        }
+
+        var newSNO = lastSNO + 1;
+        snoField.value = newSNO;
+        localStorage.setItem('lastEnquirySNO', newSNO);
+
+        console.log('✅ S.NO generated: ' + newSNO);
+    } else {
+        console.error('❌ S.NO field not found!');
+    }
+})();
+</script>
+
+
                     <div class="form-group">
                         <label for="date">DATE</label>
                         <input type="date" id="date" name="date" required>
@@ -873,10 +894,6 @@
                         <input type="text" id="area" name="area" class="uppercase">
                     </div>
                     <div class="form-group required">
-                        <label for="city">CITY</label>
-                        <input type="text" id="city" name="city" class="uppercase" value="BHOPAL" required>
-                    </div>
-                    <div class="form-group required">
                         <label for="district">DISTRICT</label>
                         <input type="text" id="district" name="district" class="uppercase" value="BHOPAL" required>
                     </div>
@@ -891,11 +908,7 @@
                         <label for="pincode">PIN CODE</label>
                         <input type="text" id="pincode" name="pincode" pattern="[0-9]{6}" placeholder="6 digit PIN" required>
                     </div>
-                    <div class="form-group">
-                        <label for="country">COUNTRY</label>
-                        <input type="text" id="country" name="country" class="uppercase" value="INDIA" readonly>
                     </div>
-                </div>
             </fieldset>
 
             <!-- SIBLING DETAILS -->
@@ -1061,45 +1074,63 @@
     </div>
 
 <script>
-/* PAGE 1 AUTO-SAVE FUNCTIONALITY */
+// PAGE 1 AUTO-SAVE FUNCTIONALITY
 function autoSavePage1() {
     const form = document.getElementById('enquiryForm');
     if (!form) return;
 
     const formData = new FormData(form);
     const data = {};
-    for (const [key, value] of formData.entries()) {
+    for (let [key, value] of formData.entries()) {
         data[key] = value;
     }
 
+    // Save gender radio button
     const gender = document.querySelector('input[name="gender"]:checked');
     if (gender) data.gender = gender.value;
 
+    // Save source checkboxes
     const sources = document.querySelectorAll('input[name="source"]:checked');
     data.sources = Array.from(sources).map(s => s.value);
 
+    // Save referred type
     const referredType = document.querySelector('input[name="referredType"]:checked');
     if (referredType) data.referredType = referredType.value;
 
     localStorage.setItem('enquiryPage1', JSON.stringify(data));
-    console.log('Page 1 auto-saved', data);
+    console.log('✅ Page 1 auto-saved', data);
 }
 
+// Auto-save on every input
 document.addEventListener('input', autoSavePage1);
 document.addEventListener('change', autoSavePage1);
 
-/* S.NO AUTO-GENERATION */
-function generateSNo() {
-    let records = JSON.parse(localStorage.getItem('enquiryRecords') || '[]');
-    const nextNum = 2026001 + records.length;
-    const snoField = document.getElementById('sno');
-    if (snoField) {
-        snoField.value = nextNum.toString();
-        console.log('S.No generated:', nextNum);
+// Load saved data on page load
+window.addEventListener('load', function() {
+    const saved = localStorage.getItem('enquiryPage1');
+    if (saved) {
+        const data = JSON.parse(saved);
+        Object.keys(data).forEach(key => {
+            const field = document.getElementById(key);
+            if (field) {
+                if (field.type === 'radio') {
+                    const radio = document.querySelector(`input[name="${key}"][value="${data[key]}"]`);
+                    if (radio) radio.checked = true;
+                } else if (field.type === 'checkbox') {
+                    field.checked = data[key];
+                } else {
+                    field.value = data[key];
+                }
+            }
+        });
+        console.log('✅ Page 1 loaded saved data');
     }
-}
+});
 
-/* AGE CALCULATION */
+
+// ============================================================
+// AGE CALCULATION - FULL WORKING VERSION
+// ============================================================
 function calculateAge(dob, asOfDate) {
     const dobDate = new Date(dob);
     const refDate = asOfDate ? new Date(asOfDate) : new Date();
@@ -1134,9 +1165,12 @@ function updateAgeDisplays() {
 
     // Current age
     const currentAge = calculateAge(dob);
-    document.getElementById('ageDisplay').innerHTML = `<strong>${currentAge.years}</strong> Years <strong>${currentAge.months}</strong> Months <strong>${currentAge.days}</strong> Days`;
+    document.getElementById('ageDisplay').innerHTML = 
+        '<strong>' + currentAge.years + '</strong> Years <strong>' + 
+        currentAge.months + '</strong> Months <strong>' + 
+        currentAge.days + '</strong> Days';
 
-    // Age as on specific date
+    // Age as on specific date based on class
     const ageAsOnGroup = document.getElementById('ageAsOnGroup');
     const ageAsOnLabel = document.getElementById('ageAsOnLabel');
     const ageAsOnDisplay = document.getElementById('ageAsOnDisplay');
@@ -1145,71 +1179,56 @@ function updateAgeDisplays() {
     if (!ageAsOnGroup) return;
 
     if (selectedClass === 'NURSERY' || selectedClass === 'KG I' || selectedClass === 'KG II') {
+        // Age as on 31 July 2026
         const ageAsOn31July = calculateAge(dob, '2026-07-31');
         ageAsOnGroup.style.display = 'block';
         ageAsOnLabel.textContent = 'AGE AS ON 31 JULY 2026';
-        ageAsOnDisplay.innerHTML = `<strong>${ageAsOn31July.years}</strong> Y <strong>${ageAsOn31July.months}</strong> M <strong>${ageAsOn31July.days}</strong> D`;
+        ageAsOnDisplay.innerHTML = 
+            '<strong>' + ageAsOn31July.years + '</strong> Y <strong>' + 
+            ageAsOn31July.months + '</strong> M <strong>' + 
+            ageAsOn31July.days + '</strong> D';
         ageAsOnInfo.textContent = 'For Nursery, KG I & KG II admission';
-    } else if (selectedClass === 'CLASS I') {
+    } else if (selectedClass === 'I') {
+        // Age as on 30 Sept 2026
         const ageAsOn30Sept = calculateAge(dob, '2026-09-30');
         ageAsOnGroup.style.display = 'block';
         ageAsOnLabel.textContent = 'AGE AS ON 30 SEPT 2026';
-        ageAsOnDisplay.innerHTML = `<strong>${ageAsOn30Sept.years}</strong> Y <strong>${ageAsOn30Sept.months}</strong> M <strong>${ageAsOn30Sept.days}</strong> D`;
+        ageAsOnDisplay.innerHTML = 
+            '<strong>' + ageAsOn30Sept.years + '</strong> Y <strong>' + 
+            ageAsOn30Sept.months + '</strong> M <strong>' + 
+            ageAsOn30Sept.days + '</strong> D';
         ageAsOnInfo.textContent = 'For Class I admission';
     } else {
         ageAsOnGroup.style.display = 'none';
     }
 }
 
-/* AUTO-UPPERCASE */
-document.addEventListener('DOMContentLoaded', function() {
-    document.querySelectorAll('.uppercase').forEach(input => {
-        input.addEventListener('input', function() {
-            this.value = this.value.toUpperCase();
-        });
-    });
-
-    // Load saved data
-    const saved = localStorage.getItem('enquiryPage1');
-    if (saved) {
-        const data = JSON.parse(saved);
-        Object.keys(data).forEach(key => {
-            const field = document.getElementById(key);
-            if (!field) return;
-            if (field.type === 'radio') {
-                const radio = document.querySelector(`input[name="${key}"][value="${data[key]}"]`);
-                if (radio) radio.checked = true;
-            } else if (field.type === 'checkbox') {
-                field.checked = !!data[key];
-            } else {
-                field.value = data[key];
-            }
-        });
-        console.log('Page 1 loaded saved data');
+// ============================================================
+// S.NO AUTO-GENERATION - STARTING FROM 2026001
+// ============================================================
+function generateSNo() {
+    let records = JSON.parse(localStorage.getItem('enquiryRecords') || '[]');
+    const nextNum = 2026001 + records.length;
+    const snoField = document.getElementById('sno');
+    if (snoField) {
+        snoField.value = nextNum.toString();
     }
+    console.log('✅ S.No generated:', nextNum);
+}
 
-    const dobField = document.getElementById('dob');
-    const classField = document.getElementById('classApplied');
-    if (dobField) dobField.addEventListener('change', updateAgeDisplays);
-    if (classField) classField.addEventListener('change', updateAgeDisplays);
-
-    generateSNo();
-
-    // Set today's date
-    const dateField = document.getElementById('date');
-    if (dateField && !dateField.value) {
-        dateField.valueAsDate = new Date();
-    }
-});
-
-/* PRINT FUNCTION */
+// ============================================================
+// PRINT / SAVE AS PDF FUNCTION
+// ============================================================
 function printForm() {
     window.print();
 }
 
-/* SAVE ENQUIRY */
+// ============================================================
+// SAVE ENQUIRY FUNCTION
+// ============================================================
 function saveEnquiry() {
     console.log('Saving Page 1 Enquiry...');
+
     const form = document.getElementById('enquiryForm');
     if (!form.checkValidity()) {
         form.reportValidity();
@@ -1217,17 +1236,36 @@ function saveEnquiry() {
     }
 
     autoSavePage1();
-    alert('✓ Page 1 data saved successfully! Click NEXT to proceed to Fee Calculator.');
+    alert('✅ Page 1 data saved successfully!\nClick NEXT to proceed to Fee Calculator.');
     return true;
 }
 
-/* GO TO PAGE 2 */
+// ============================================================
+// EVENT LISTENERS - AGE CALCULATION
+// ============================================================
+document.addEventListener('DOMContentLoaded', function() {
+    const dobField = document.getElementById('dob');
+    const classField = document.getElementById('classApplied');
+
+    if (dobField) {
+        dobField.addEventListener('change', updateAgeDisplays);
+    }
+
+    if (classField) {
+        classField.addEventListener('change', updateAgeDisplays);
+    }
+
+    // Generate S.No on load
+    generateSNo();
+
+    console.log('✅ Page 1 functions loaded');
+});
+
+
 function goToPage2() {
     autoSavePage1();
     window.location.href = 'enquiry-page2-CONNECTED.html';
 }
-
-console.log('✓ Page 1 functions loaded');
 </script>
 </body>
 </html>
