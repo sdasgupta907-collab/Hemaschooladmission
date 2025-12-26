@@ -1061,63 +1061,45 @@
     </div>
 
 <script>
-// PAGE 1 AUTO-SAVE FUNCTIONALITY
+/* PAGE 1 AUTO-SAVE FUNCTIONALITY */
 function autoSavePage1() {
     const form = document.getElementById('enquiryForm');
     if (!form) return;
 
     const formData = new FormData(form);
     const data = {};
-    for (let [key, value] of formData.entries()) {
+    for (const [key, value] of formData.entries()) {
         data[key] = value;
     }
 
-    // Save gender radio button
     const gender = document.querySelector('input[name="gender"]:checked');
     if (gender) data.gender = gender.value;
 
-    // Save source checkboxes
     const sources = document.querySelectorAll('input[name="source"]:checked');
     data.sources = Array.from(sources).map(s => s.value);
 
-    // Save referred type
     const referredType = document.querySelector('input[name="referredType"]:checked');
     if (referredType) data.referredType = referredType.value;
 
     localStorage.setItem('enquiryPage1', JSON.stringify(data));
-    console.log('✅ Page 1 auto-saved', data);
+    console.log('Page 1 auto-saved', data);
 }
 
-// Auto-save on every input
 document.addEventListener('input', autoSavePage1);
 document.addEventListener('change', autoSavePage1);
 
-// Load saved data on page load
-window.addEventListener('load', function() {
-    const saved = localStorage.getItem('enquiryPage1');
-    if (saved) {
-        const data = JSON.parse(saved);
-        Object.keys(data).forEach(key => {
-            const field = document.getElementById(key);
-            if (field) {
-                if (field.type === 'radio') {
-                    const radio = document.querySelector(`input[name="${key}"][value="${data[key]}"]`);
-                    if (radio) radio.checked = true;
-                } else if (field.type === 'checkbox') {
-                    field.checked = data[key];
-                } else {
-                    field.value = data[key];
-                }
-            }
-        });
-        console.log('✅ Page 1 loaded saved data');
+/* S.NO AUTO-GENERATION */
+function generateSNo() {
+    let records = JSON.parse(localStorage.getItem('enquiryRecords') || '[]');
+    const nextNum = 2026001 + records.length;
+    const snoField = document.getElementById('sno');
+    if (snoField) {
+        snoField.value = nextNum.toString();
+        console.log('S.No generated:', nextNum);
     }
-});
+}
 
-
-// ============================================================
-// AGE CALCULATION - FULL WORKING VERSION
-// ============================================================
+/* AGE CALCULATION */
 function calculateAge(dob, asOfDate) {
     const dobDate = new Date(dob);
     const refDate = asOfDate ? new Date(asOfDate) : new Date();
@@ -1152,12 +1134,9 @@ function updateAgeDisplays() {
 
     // Current age
     const currentAge = calculateAge(dob);
-    document.getElementById('ageDisplay').innerHTML = 
-        '<strong>' + currentAge.years + '</strong> Years <strong>' + 
-        currentAge.months + '</strong> Months <strong>' + 
-        currentAge.days + '</strong> Days';
+    document.getElementById('ageDisplay').innerHTML = `<strong>${currentAge.years}</strong> Years <strong>${currentAge.months}</strong> Months <strong>${currentAge.days}</strong> Days`;
 
-    // Age as on specific date based on class
+    // Age as on specific date
     const ageAsOnGroup = document.getElementById('ageAsOnGroup');
     const ageAsOnLabel = document.getElementById('ageAsOnLabel');
     const ageAsOnDisplay = document.getElementById('ageAsOnDisplay');
@@ -1166,56 +1145,71 @@ function updateAgeDisplays() {
     if (!ageAsOnGroup) return;
 
     if (selectedClass === 'NURSERY' || selectedClass === 'KG I' || selectedClass === 'KG II') {
-        // Age as on 31 July 2026
         const ageAsOn31July = calculateAge(dob, '2026-07-31');
         ageAsOnGroup.style.display = 'block';
         ageAsOnLabel.textContent = 'AGE AS ON 31 JULY 2026';
-        ageAsOnDisplay.innerHTML = 
-            '<strong>' + ageAsOn31July.years + '</strong> Y <strong>' + 
-            ageAsOn31July.months + '</strong> M <strong>' + 
-            ageAsOn31July.days + '</strong> D';
+        ageAsOnDisplay.innerHTML = `<strong>${ageAsOn31July.years}</strong> Y <strong>${ageAsOn31July.months}</strong> M <strong>${ageAsOn31July.days}</strong> D`;
         ageAsOnInfo.textContent = 'For Nursery, KG I & KG II admission';
-    } else if (selectedClass === 'I') {
-        // Age as on 30 Sept 2026
+    } else if (selectedClass === 'CLASS I') {
         const ageAsOn30Sept = calculateAge(dob, '2026-09-30');
         ageAsOnGroup.style.display = 'block';
         ageAsOnLabel.textContent = 'AGE AS ON 30 SEPT 2026';
-        ageAsOnDisplay.innerHTML = 
-            '<strong>' + ageAsOn30Sept.years + '</strong> Y <strong>' + 
-            ageAsOn30Sept.months + '</strong> M <strong>' + 
-            ageAsOn30Sept.days + '</strong> D';
+        ageAsOnDisplay.innerHTML = `<strong>${ageAsOn30Sept.years}</strong> Y <strong>${ageAsOn30Sept.months}</strong> M <strong>${ageAsOn30Sept.days}</strong> D`;
         ageAsOnInfo.textContent = 'For Class I admission';
     } else {
         ageAsOnGroup.style.display = 'none';
     }
 }
 
-// ============================================================
-// S.NO AUTO-GENERATION - STARTING FROM 2026001
-// ============================================================
-function generateSNo() {
-    let records = JSON.parse(localStorage.getItem('enquiryRecords') || '[]');
-    const nextNum = 2026001 + records.length;
-    const snoField = document.getElementById('sno');
-    if (snoField) {
-        snoField.value = nextNum.toString();
-    }
-    console.log('✅ S.No generated:', nextNum);
-}
+/* AUTO-UPPERCASE */
+document.addEventListener('DOMContentLoaded', function() {
+    document.querySelectorAll('.uppercase').forEach(input => {
+        input.addEventListener('input', function() {
+            this.value = this.value.toUpperCase();
+        });
+    });
 
-// ============================================================
-// PRINT / SAVE AS PDF FUNCTION
-// ============================================================
+    // Load saved data
+    const saved = localStorage.getItem('enquiryPage1');
+    if (saved) {
+        const data = JSON.parse(saved);
+        Object.keys(data).forEach(key => {
+            const field = document.getElementById(key);
+            if (!field) return;
+            if (field.type === 'radio') {
+                const radio = document.querySelector(`input[name="${key}"][value="${data[key]}"]`);
+                if (radio) radio.checked = true;
+            } else if (field.type === 'checkbox') {
+                field.checked = !!data[key];
+            } else {
+                field.value = data[key];
+            }
+        });
+        console.log('Page 1 loaded saved data');
+    }
+
+    const dobField = document.getElementById('dob');
+    const classField = document.getElementById('classApplied');
+    if (dobField) dobField.addEventListener('change', updateAgeDisplays);
+    if (classField) classField.addEventListener('change', updateAgeDisplays);
+
+    generateSNo();
+
+    // Set today's date
+    const dateField = document.getElementById('date');
+    if (dateField && !dateField.value) {
+        dateField.valueAsDate = new Date();
+    }
+});
+
+/* PRINT FUNCTION */
 function printForm() {
     window.print();
 }
 
-// ============================================================
-// SAVE ENQUIRY FUNCTION
-// ============================================================
+/* SAVE ENQUIRY */
 function saveEnquiry() {
     console.log('Saving Page 1 Enquiry...');
-
     const form = document.getElementById('enquiryForm');
     if (!form.checkValidity()) {
         form.reportValidity();
@@ -1223,36 +1217,17 @@ function saveEnquiry() {
     }
 
     autoSavePage1();
-    alert('✅ Page 1 data saved successfully!\nClick NEXT to proceed to Fee Calculator.');
+    alert('✓ Page 1 data saved successfully! Click NEXT to proceed to Fee Calculator.');
     return true;
 }
 
-// ============================================================
-// EVENT LISTENERS - AGE CALCULATION
-// ============================================================
-document.addEventListener('DOMContentLoaded', function() {
-    const dobField = document.getElementById('dob');
-    const classField = document.getElementById('classApplied');
-
-    if (dobField) {
-        dobField.addEventListener('change', updateAgeDisplays);
-    }
-
-    if (classField) {
-        classField.addEventListener('change', updateAgeDisplays);
-    }
-
-    // Generate S.No on load
-    generateSNo();
-
-    console.log('✅ Page 1 functions loaded');
-});
-
-
+/* GO TO PAGE 2 */
 function goToPage2() {
     autoSavePage1();
     window.location.href = 'enquiry-page2-CONNECTED.html';
 }
+
+console.log('✓ Page 1 functions loaded');
 </script>
 </body>
 </html>
